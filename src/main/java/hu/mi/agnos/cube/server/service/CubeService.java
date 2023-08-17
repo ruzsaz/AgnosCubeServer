@@ -14,6 +14,8 @@ import hu.agnos.molap.dimension.Hierarchy;
 import hu.mi.agnos.cube.server.repository.CubeRepo;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,11 +25,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class CubeService {
 
+    @Autowired
+    CubeRepo cubeRepo;
+
     public CubeList getCubesDate() {
         CubeList result = new CubeList();
-        for (String cubeName : CubeRepo.getInstance().keySet()) {
+        for (String cubeName : cubeRepo.keySet()) {
             String createdDateString = "";
-            Cube c = CubeRepo.getInstance().getCube(cubeName);
+            Cube c = cubeRepo.getCube(cubeName);
             Date agnosCreatedDate = c.getCreatedDate();
             SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             createdDateString = dateformat.format(agnosCreatedDate);
@@ -39,19 +44,19 @@ public class CubeService {
 
     public ResultSet[] getData(String cubeName, String baseVector, String drillVectors) {
         ResultSet[] result = null;
-        Cube cube = CubeRepo.getInstance().getCube(cubeName);
+        Cube cube = cubeRepo.getCube(cubeName);
         NativeStatement statement = new NativeStatement(cube);
         result = statement.executeQueries(baseVector, drillVectors.split(","));
         return result;
     }
 
     public String[] getHierarchyHeader(String cubeName) {
-        Cube cube = CubeRepo.getInstance().getCube(cubeName);
+        Cube cube = cubeRepo.getCube(cubeName);
         return cube.getHierarchyHeader();        
     }
     
     public HierarchyDTO getHierarchy(String cubeName, String hierarchyName) {       
-        Cube cube = CubeRepo.getInstance().getCube(cubeName);
+        Cube cube = cubeRepo.getCube(cubeName);
         
         int dimIndex = cube.getHierarchyInfoByHeader(hierarchyName)[0];
         int hierIndex = cube.getHierarchyInfoByHeader(hierarchyName)[1];
@@ -60,7 +65,7 @@ public class CubeService {
         return new HierarchyDTO(hierarchy);        
     }
         public String[] getMeasureHeader(String cubeName) {
-        Cube cube = CubeRepo.getInstance().getCube(cubeName);
+        Cube cube = cubeRepo.getCube(cubeName);
         return cube.getMeasureHeader();
                 
     }

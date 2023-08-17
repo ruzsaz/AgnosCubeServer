@@ -5,6 +5,9 @@
 package hu.mi.agnos.cube.server.repository;
 
 import hu.agnos.molap.Cube;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,27 +16,16 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Configuration
+public class CubeRepo extends HashMap<String, Cube> {
 
-public final class CubeRepo extends HashMap<String, Cube> {
-    
-    
-    
-
-    private static CubeRepo instance = null;
-
-    public static synchronized CubeRepo getInstance() {
-        if (instance == null) {
-            instance = new CubeRepo().loader();
-        }
-        return instance;
+    @Bean
+    public CubeRepo getCubeRepo() {
+        return new CubeRepo().loader();
     }
 
     public CubeRepo() {
         super();
-    }
-
-    public void refresh() {
-        instance = loader();
     }
 
     private CubeRepo loader() {
