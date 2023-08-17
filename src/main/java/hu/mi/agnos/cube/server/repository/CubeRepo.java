@@ -16,19 +16,13 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Configuration
 public class CubeRepo extends HashMap<String, Cube> {
-
-    @Bean
-    public CubeRepo getCubeRepo() {
-        return new CubeRepo().loader();
-    }
 
     public CubeRepo() {
         super();
     }
 
-    private CubeRepo loader() {
+    public static CubeRepo loader() {
         CubeRepo tempInstance = new CubeRepo();
 
         String path = null;
