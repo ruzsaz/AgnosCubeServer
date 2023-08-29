@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  nginx:
+    image: agnos-cube-nginx:1.0
+    container_name: agnos-cube-nginx
+    ports:
+      - "7979:7979"
+    networks:
+      - agnos
+    logging:
+        driver: "json-file"
+        options:
+            max-file: "5"
+            max-size: "10m"
+
+  cube-server-1:
+    image: agnos-cube-server:2.0
+    container_name: agnos-cube-server-1
+    volumes:
+       - /home/parisek/Desktop/agnos/Products:/usr/local/agnos/Products/
+    networks:
+      - agnos
+    logging:
+        driver: "json-file"
+        options:
+            max-file: "5"
+            max-size: "10m"
+
+  cube-server-2:
+    image: agnos-cube-server:2.0
+    container_name: agnos-cube-server-2
+    volumes:
+       - /home/parisek/Desktop/agnos/Products:/usr/local/agnos/Products/
+    networks:
+      - agnos
+    logging:
+        driver: "json-file"
+        options:
+            max-file: "5"
+            max-size: "10m"
+
+networks:
+    agnos:
