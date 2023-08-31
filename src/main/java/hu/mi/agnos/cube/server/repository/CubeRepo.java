@@ -26,20 +26,20 @@ public class CubeRepo extends HashMap<String, Cube> {
         CubeRepo tempInstance = new CubeRepo();
 
         String path = null;
+        final String CUBES_DIR = System.getenv("CUBES_DIR");
         final String AGNOS_HOME = System.getenv("AGNOS_HOME");
-        if (!AGNOS_HOME.endsWith("/")) {
-            path = AGNOS_HOME + "/AgnosReportingServer/";
-        } else {
-            path = AGNOS_HOME + "AgnosReportingServer/";
-        }
-        final File folder = new File(path + "Cubes");
+
+        final File folder = (CUBES_DIR != null) ? new File(CUBES_DIR) : new File(AGNOS_HOME, "/AgnosReportingServer/Cubes");
+        System.out.println("Cube base dir: " + folder.getAbsolutePath());
         for (final File fileEntry : folder.listFiles()) {
             String fileName = fileEntry.getName();
             if (fileName.toLowerCase().endsWith(".cube")) {
 
                 Cube cube = null;
                 try {
-                    FileInputStream fileIn = new FileInputStream(path + "Cubes/" + fileName);
+                    FileInputStream fileIn = new FileInputStream(fileEntry);
+                    //FileInputStream fileIn = new FileInputStream(path + "/" + fileName);
+
                     ObjectInputStream in = new ObjectInputStream(fileIn);
                     System.out.println("betöltés alatt: " + fileName);
                     cube = (Cube) in.readObject();

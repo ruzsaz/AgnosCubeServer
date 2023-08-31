@@ -1,1 +1,0 @@
-sudo docker build -t agnos-cube-nginx:1.0 .
