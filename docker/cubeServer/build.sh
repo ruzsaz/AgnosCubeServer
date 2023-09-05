@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TARGET_CONTAINER_NAME="agnos-cube-server:2.0"
+TARGET_CONTAINER_NAME="ruzsaz/agnos-cube-server:2.0"
 
 RELATIVE_SCRIPT_DIR=$( dirname -- ${BASH_SOURCE[0]} )
 SCRIPT_DIR=$( cd -- ${RELATIVE_SCRIPT_DIR} &> /dev/null && pwd )
