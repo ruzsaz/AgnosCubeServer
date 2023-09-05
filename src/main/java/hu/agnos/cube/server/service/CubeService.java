@@ -2,16 +2,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package hu.mi.agnos.cube.server.service;
+package hu.agnos.cube.server.service;
 
 import hu.agnos.cube.driver.NativeStatement;
 import hu.agnos.cube.driver.ResultSet;
 import hu.agnos.cube.meta.dto.CubeNameAndDate;
 import hu.agnos.cube.meta.dto.CubeList;
 import hu.agnos.cube.meta.dto.HierarchyDTO;
+import hu.agnos.cube.server.repository.CubeRepo;
 import hu.agnos.molap.Cube;
 import hu.agnos.molap.dimension.Hierarchy;
-import hu.mi.agnos.cube.server.repository.CubeRepo;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

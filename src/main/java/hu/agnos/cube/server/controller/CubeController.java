@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hu.mi.agnos.cube.server.controller;
+package hu.agnos.cube.server.controller;
 
 import hu.agnos.cube.meta.dto.CubeList;
 import hu.agnos.cube.driver.ResultSet;
 import hu.agnos.cube.meta.dto.HierarchyDTO;
-import hu.mi.agnos.cube.server.service.CubeService;
+import hu.agnos.cube.server.service.CubeService;
+
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

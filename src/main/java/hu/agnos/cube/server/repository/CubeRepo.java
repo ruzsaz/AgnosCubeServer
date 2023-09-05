@@ -2,11 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package hu.mi.agnos.cube.server.repository;
+package hu.agnos.cube.server.repository;
 
 import hu.agnos.molap.Cube;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,10 +24,9 @@ public class CubeRepo extends HashMap<String, Cube> {
         CubeRepo tempInstance = new CubeRepo();
 
         String path = null;
-        final String CUBES_DIR = System.getenv("CUBES_DIR");
-        final String AGNOS_HOME = System.getenv("AGNOS_HOME");
+        final String CUBES_DIR = System.getenv("AGNOS_CUBES_DIR");
 
-        final File folder = (CUBES_DIR != null) ? new File(CUBES_DIR) : new File(AGNOS_HOME, "/AgnosReportingServer/Cubes");
+        final File folder = new File(CUBES_DIR);
         System.out.println("Cube base dir: " + folder.getAbsolutePath());
         for (final File fileEntry : folder.listFiles()) {
             String fileName = fileEntry.getName();
