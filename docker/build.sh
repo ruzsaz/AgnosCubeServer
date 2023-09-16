@@ -10,5 +10,14 @@ SCRIPT_DIR=$( cd -- ${RELATIVE_SCRIPT_DIR} &> /dev/null && pwd )
 cd ${SCRIPT_DIR}
 source ./env.txt
 
-# Build the container using the local Dockerfile
+# Base directory of the package
+GIT_ROOT_DIR=$( git rev-parse --show-toplevel )
+
+LATEST_JAR=$( ls -v ${GIT_ROOT_DIR}/target/AgnosCubeServer*.jar | tail -n 1 )
+echo ${LATEST_JAR}
+
+cp ${LATEST_JAR} ./AgnosCubeServer.jar
+
 docker build -t ${TARGET_CONTAINER_NAME} .
+
+rm ./AgnosCubeServer.jar
