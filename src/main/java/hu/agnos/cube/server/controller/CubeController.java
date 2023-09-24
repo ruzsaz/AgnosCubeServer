@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
  * @author parisek
  */
 @RestController
-//@RequestMapping("/cube")
 public class CubeController {
 
     private final Logger log = LoggerFactory.getLogger(CubeController.class);
@@ -32,17 +31,17 @@ public class CubeController {
     private CubeService cubeService;
 
     @GetMapping("/data")
-    ResponseEntity<?> getData(@RequestParam(value = "name", required = true) String cubeName,
-            @RequestParam(value = "base", required = true) String baseVector,
-            @RequestParam(value = "drill", required = true) String drillVectors) {
+    ResponseEntity<?> getData(@RequestParam(value = "name") String cubeName,
+            @RequestParam(value = "base") String baseVector,
+            @RequestParam(value = "drill") String drillVectors) {
         Optional<ResultSet[]> result = Optional.ofNullable(cubeService.getData(cubeName, baseVector, drillVectors));
         return result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/hierarchy")
-    ResponseEntity<?> getHierarchyByName(@RequestParam(value = "cubename", required = true) String cubeName,
-            @RequestParam(value = "hierarchyname", required = true) String hierarchyName) {
+    ResponseEntity<?> getHierarchyByName(@RequestParam(value = "cubename") String cubeName,
+            @RequestParam(value = "hierarchyname") String hierarchyName) {
         Optional<HierarchyDTO> result = Optional.ofNullable(cubeService.getHierarchy(cubeName, hierarchyName));
         return result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -57,19 +56,17 @@ public class CubeController {
     }
 
     @GetMapping("/measure_header")
-    ResponseEntity<?> getMeasureHeader(@RequestParam(value = "name", required = true) String cubeName) {
+    ResponseEntity<?> getMeasureHeader(@RequestParam(value = "name") String cubeName) {
         Optional<String[]> result = Optional.ofNullable(cubeService.getMeasureHeader(cubeName));
         return result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/hierarchy_header")
-    ResponseEntity<?> getHierarchyHeader(@RequestParam(value = "name", required = true) String cubeName) {
+    ResponseEntity<?> getHierarchyHeader(@RequestParam(value = "name") String cubeName) {
         Optional<String[]> result = Optional.ofNullable(cubeService.getHierarchyHeader(cubeName));
         return result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
-   
 
 }

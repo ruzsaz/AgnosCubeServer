@@ -23,7 +23,6 @@ public class CubeRepo extends HashMap<String, Cube> {
     public static CubeRepo loader() {
         CubeRepo tempInstance = new CubeRepo();
 
-        String path = null;
         final String CUBES_DIR = System.getenv("AGNOS_CUBES_DIR");
 
         final File folder = new File(CUBES_DIR);
@@ -35,10 +34,9 @@ public class CubeRepo extends HashMap<String, Cube> {
                 Cube cube = null;
                 try {
                     FileInputStream fileIn = new FileInputStream(fileEntry);
-                    //FileInputStream fileIn = new FileInputStream(path + "/" + fileName);
 
                     ObjectInputStream in = new ObjectInputStream(fileIn);
-                    System.out.println("betöltés alatt: " + fileName);
+                    System.out.println("loading " + fileName + "...");
                     cube = (Cube) in.readObject();
 
                     in.close();
@@ -54,6 +52,12 @@ public class CubeRepo extends HashMap<String, Cube> {
             }
         }
         return tempInstance;
+    }
+
+    public void refresh() {
+        this.clear();
+        CubeRepo tmp = CubeRepo.loader();
+        this.putAll(tmp);
     }
 
     public Cube getCube(String cubeUniqueName) {

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package hu.agnos.cube.server.service;
 
 import hu.agnos.cube.driver.NativeStatement;
@@ -32,11 +28,10 @@ public class CubeService {
     public CubeList getCubesDate() {
         CubeList result = new CubeList();
         for (String cubeName : cubeRepo.keySet()) {
-            String createdDateString = "";
             Cube c = cubeRepo.getCube(cubeName);
             Date agnosCreatedDate = c.getCreatedDate();
-            SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            createdDateString = dateformat.format(agnosCreatedDate);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String createdDateString = dateFormat.format(agnosCreatedDate);
             CubeNameAndDate cubeNameAndDate = new CubeNameAndDate(cubeName, createdDateString);
             result.getCubesNameAndDate().add(cubeNameAndDate);
         }
@@ -44,11 +39,9 @@ public class CubeService {
     }
 
     public ResultSet[] getData(String cubeName, String baseVector, String drillVectors) {
-        ResultSet[] result = null;
         Cube cube = cubeRepo.getCube(cubeName);
         NativeStatement statement = new NativeStatement(cube);
-        result = statement.executeQueries(baseVector, drillVectors.split(","));
-        return result;
+        return statement.executeQueries(baseVector, drillVectors.split(","));
     }
 
     public String[] getHierarchyHeader(String cubeName) {
