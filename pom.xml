@@ -10,7 +10,7 @@
     </parent>
     <groupId>hu.agnos</groupId>
     <artifactId>AgnosCubeServer</artifactId>
-    <version>3.0</version>
+    <version>4.0</version>
     <name>AgnosCubeServer</name>
     <description>OLAP server implementation</description>
     <properties>
@@ -43,7 +43,7 @@
         <dependency>
             <groupId>hu.agnos</groupId>
             <artifactId>AgnosCubeMeta</artifactId>
-            <version>3.0</version>
+            <version>4.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
