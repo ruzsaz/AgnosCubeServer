@@ -46,6 +46,7 @@ public class CubeRepo extends HashMap<String, Cube> {
 
                 }
                 if (cube != null) {
+                    // cube.init();
                     tempInstance.put(cube.getName(), cube);
                 }
 
