@@ -1,22 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package hu.agnos.cube.server.controller;
 
-import hu.agnos.cube.meta.dto.CubeList;
-import hu.agnos.cube.driver.ResultSet;
-import hu.agnos.cube.meta.dto.HierarchyDTO;
-import hu.agnos.cube.server.service.CubeService;
-
 import java.util.Optional;
+
+import hu.agnos.cube.meta.drillDto.CubeQuery;
+import hu.agnos.cube.meta.dto.CubeList;
+import hu.agnos.cube.meta.dto.ResultSet;
+import hu.agnos.cube.server.service.CubeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
@@ -30,43 +28,26 @@ public class CubeController {
     @Autowired
     private CubeService cubeService;
 
-    @GetMapping("/data")
-    ResponseEntity<?> getData(@RequestParam(value = "name") String cubeName,
-            @RequestParam(value = "base") String baseVector,
-            @RequestParam(value = "drill") String drillVectors) {
-        Optional<ResultSet[]> result = Optional.ofNullable(cubeService.getData(cubeName, baseVector, drillVectors));
-        return result.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping("/hierarchy")
-    ResponseEntity<?> getHierarchyByName(@RequestParam(value = "cubename") String cubeName,
-            @RequestParam(value = "hierarchyname") String hierarchyName) {
-        Optional<HierarchyDTO> result = Optional.ofNullable(cubeService.getHierarchy(cubeName, hierarchyName));
+    @PostMapping(value = "/data", consumes = "application/json", produces = "application/json")
+    ResponseEntity<?> getData(@RequestBody CubeQuery query) {
+        Optional<ResultSet[]> result = Optional.ofNullable(cubeService.getData(query));
         return result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/cube_list")
     ResponseEntity<?> getCubeList() {
-        CubeList cubeNameAndList = cubeService.getCubesDate();
+        CubeList cubeNameAndList = cubeService.getCubeList();
         Optional<CubeList> result = Optional.ofNullable(cubeNameAndList);
         return result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/measure_header")
-    ResponseEntity<?> getMeasureHeader(@RequestParam(value = "name") String cubeName) {
-        Optional<String[]> result = Optional.ofNullable(cubeService.getMeasureHeader(cubeName));
-        return result.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping("/hierarchy_header")
-    ResponseEntity<?> getHierarchyHeader(@RequestParam(value = "name") String cubeName) {
-        Optional<String[]> result = Optional.ofNullable(cubeService.getHierarchyHeader(cubeName));
-        return result.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
+//    @GetMapping("/dimension_header")
+//    ResponseEntity<?> getDimensionHeader(@RequestParam(value = "name") String cubeName) {
+//        Optional<String[]> result = Optional.ofNullable(cubeService.getDimensionHeader(cubeName));
+//        return result.map(response -> ResponseEntity.ok().body(response))
+//                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+//    }
 
 }

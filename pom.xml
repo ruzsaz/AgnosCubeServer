@@ -47,9 +47,15 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>hu.agnos</groupId>
+            <artifactId>AgnosCubeDriver</artifactId>
+            <version>4.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
+            <version>8.0.1</version>
             <type>jar</type>
         </dependency>
     </dependencies>

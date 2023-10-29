@@ -1,17 +1,17 @@
 package hu.agnos.cube.server.service;
 
-import hu.agnos.cube.driver.NativeStatement;
-import hu.agnos.cube.driver.ResultSet;
-import hu.agnos.cube.meta.dto.CubeNameAndDate;
-import hu.agnos.cube.meta.dto.CubeList;
-import hu.agnos.cube.meta.dto.HierarchyDTO;
-import hu.agnos.cube.server.repository.CubeRepo;
-import hu.agnos.molap.Cube;
-import hu.agnos.molap.dimension.Hierarchy;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import hu.agnos.cube.Cube;
+import hu.agnos.cube.meta.drillDto.CubeQuery;
+import hu.agnos.cube.meta.dto.CubeList;
+import hu.agnos.cube.meta.dto.CubeMetaDTO;
+import hu.agnos.cube.meta.dto.DimensionDTO;
+import hu.agnos.cube.meta.dto.ResultSet;
+import hu.agnos.cube.server.repository.CubeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,42 +25,37 @@ public class CubeService {
     @Autowired
     CubeRepo cubeRepo;
 
-    public CubeList getCubesDate() {
-        CubeList result = new CubeList();
+    public CubeList getCubeList() {
+        Map<String, CubeMetaDTO> cubeMap = new HashMap<>();
         for (String cubeName : cubeRepo.keySet()) {
             Cube c = cubeRepo.getCube(cubeName);
+
             Date agnosCreatedDate = c.getCreatedDate();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String createdDateString = dateFormat.format(agnosCreatedDate);
-            CubeNameAndDate cubeNameAndDate = new CubeNameAndDate(cubeName, createdDateString);
-            result.getCubesNameAndDate().add(cubeNameAndDate);
+//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String createdDateString = dateFormat.format(agnosCreatedDate);
+
+            List<DimensionDTO> dimensionHeader = c.getDimensions().stream().map(DimensionDTO::fromDimension).toList();
+            String[] measureHeader = c.getMeasureHeader();
+
+            CubeMetaDTO cubeMetaDTO = new CubeMetaDTO(agnosCreatedDate, dimensionHeader, measureHeader);
+            cubeMap.put(cubeName, cubeMetaDTO);
         }
-        return result;
+        return new CubeList(cubeMap);
     }
 
-    public ResultSet[] getData(String cubeName, String baseVector, String drillVectors) {
-        Cube cube = cubeRepo.getCube(cubeName);
+    public ResultSet[] getData(CubeQuery query) {
+        Cube cube = cubeRepo.getCube(query.cubeName());
         NativeStatement statement = new NativeStatement(cube);
-        return statement.executeQueries(baseVector, drillVectors.split(","));
+        return statement.executeQueries(query.baseVector(), query.drillVectors(), query.originalDrills());
     }
 
-    public String[] getHierarchyHeader(String cubeName) {
+    public String[] getDimensionHeader(String cubeName) {
         Cube cube = cubeRepo.getCube(cubeName);
-        return cube.getHierarchyHeader();        
+        return cube.getDimensionHeader();
     }
-    
-    public HierarchyDTO getHierarchy(String cubeName, String hierarchyName) {       
-        Cube cube = cubeRepo.getCube(cubeName);
-        
-        int dimIndex = cube.getHierarchyInfoByHeader(hierarchyName)[0];
-        int hierIndex = cube.getHierarchyInfoByHeader(hierarchyName)[1];
-        Hierarchy hierarchy =  cube.getDimensions().get(dimIndex).getHierarchies()[hierIndex];
-                
-        return new HierarchyDTO(hierarchy);        
-    }
-        public String[] getMeasureHeader(String cubeName) {
+
+    public String[] getMeasureHeader(String cubeName) {
         Cube cube = cubeRepo.getCube(cubeName);
         return cube.getMeasureHeader();
-                
     }
 }

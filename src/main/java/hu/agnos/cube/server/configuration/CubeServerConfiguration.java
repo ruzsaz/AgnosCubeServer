@@ -11,7 +11,7 @@ public class CubeServerConfiguration {
 
     @Bean
     public CubeRepo getCubeRepo() {
-        return CubeRepo.loader();
+        return CubeRepo.load();
     }
 
 }
