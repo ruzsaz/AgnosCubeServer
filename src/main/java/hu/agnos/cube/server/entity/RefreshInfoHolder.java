@@ -1,5 +1,6 @@
 package hu.agnos.cube.server.entity;
 
+import lombok.Getter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -8,29 +9,26 @@ import org.springframework.stereotype.Component;
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class RefreshInfoHolder {
 
-    private boolean isRefreshInProgress;
+    private boolean refreshInProgress;
 
+    @Getter
     private long lastRefreshTimeInMilliseconds;
 
     public RefreshInfoHolder() {
-        isRefreshInProgress = false;
+        refreshInProgress = false;
         lastRefreshTimeInMilliseconds = System.currentTimeMillis();
     }
 
     public boolean isRefreshInProgress() {
-        return isRefreshInProgress;
+        return refreshInProgress;
     }
 
     public void setRefreshInProgress(boolean refreshInProgress) {
-        isRefreshInProgress = refreshInProgress;
+        this.refreshInProgress = refreshInProgress;
     }
 
-    public long getLastRefreshTimeInMilliseconds() {
-        return lastRefreshTimeInMilliseconds;
-    }
-
-    public void setLastRefreshTimeInMilliseconds(long lastRefreshTimeInMilliseconds) {
-        this.lastRefreshTimeInMilliseconds = lastRefreshTimeInMilliseconds;
+    public void setLastRefreshTimeInMilliseconds(long lastRefreshInMilliseconds) {
+        this.lastRefreshTimeInMilliseconds = lastRefreshInMilliseconds;
     }
 
 }

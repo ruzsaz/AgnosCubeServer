@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class CubeServerConfiguration {
 
     @Bean
-    public CubeRepo getCubeRepo() {
+    public static CubeRepo getCubeRepo() {
         return CubeRepo.load();
     }
 

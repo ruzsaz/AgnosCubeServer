@@ -3,8 +3,8 @@ package hu.agnos.cube.server.service;
 import hu.agnos.cube.dimension.Dimension;
 import hu.agnos.cube.dimension.Node;
 import hu.agnos.cube.driver.util.SetFunctions;
-import hu.agnos.cube.meta.drillDto.BaseVectorCoordinateForCube;
-import hu.agnos.cube.meta.drillDto.DrillVectorForCube;
+import hu.agnos.cube.meta.queryDto.BaseVectorCoordinateForCube;
+import hu.agnos.cube.meta.queryDto.DrillVectorForCube;
 
 import java.util.ArrayList;
 import java.util.List;

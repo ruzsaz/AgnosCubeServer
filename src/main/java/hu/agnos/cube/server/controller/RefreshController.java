@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RefreshController {
 
-	@Autowired
-	private RefreshInfoHolder refreshInfoHolder;
+    @Autowired
+    CubeRepo cubeRepo;
+    @Autowired
+    private RefreshInfoHolder refreshInfoHolder;
 
-	@Autowired
-	CubeRepo cubeRepo;
+    @PostMapping("/refresh")
+    public String refresh() {
+        refreshInfoHolder.setRefreshInProgress(true);
+        cubeRepo.refresh();
+        refreshInfoHolder.setLastRefreshTimeInMilliseconds(System.currentTimeMillis());
+        refreshInfoHolder.setRefreshInProgress(false);
+        return "Refreshed";
+    }
 
-	@PostMapping("/refresh")
-	public String refresh() {
-		refreshInfoHolder.setRefreshInProgress(true);
-		cubeRepo.refresh();
-		refreshInfoHolder.setLastRefreshTimeInMilliseconds(System.currentTimeMillis());
-		refreshInfoHolder.setRefreshInProgress(false);
-		return "Refreshed";
-	}
 }

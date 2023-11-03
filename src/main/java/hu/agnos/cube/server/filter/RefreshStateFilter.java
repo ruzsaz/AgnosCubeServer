@@ -1,41 +1,37 @@
 package hu.agnos.cube.server.filter;
 
-import java.io.IOException;
-
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import hu.agnos.cube.server.entity.RefreshInfoHolder;
+import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import hu.agnos.cube.server.entity.RefreshInfoHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Component
 @Order(1)
 public class RefreshStateFilter implements Filter {
 
-    private final static long MILLISBETWEENREFRESHES = 0;
+    private static final long MILLISBETWEENREFRESHES = 0;
+    private static final int HTML_ERROR_CODE = 503;
 
     @Autowired
     private RefreshInfoHolder refreshInfoHolder;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
-        HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse res = (HttpServletResponse) response;
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws ServletException, IOException {
+        HttpServletRequest req = (HttpServletRequest) servletRequest;
+        HttpServletResponse res = (HttpServletResponse) servletResponse;
 
         if (refreshInfoHolder.isRefreshInProgress()) {
-            res.sendError(503);
+            res.sendError(HTML_ERROR_CODE);
         } else if (req.getRequestURI().endsWith("/refresh")
-                && System.currentTimeMillis() < refreshInfoHolder.getLastRefreshTimeInMilliseconds() + MILLISBETWEENREFRESHES ) {
-            res.sendError(503);
+                && System.currentTimeMillis() < refreshInfoHolder.getLastRefreshTimeInMilliseconds() + MILLISBETWEENREFRESHES) {
+            res.sendError(HTML_ERROR_CODE);
         } else {
-            chain.doFilter(req, res);
+            filterChain.doFilter(req, res);
         }
     }
 

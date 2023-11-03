@@ -20,9 +20,9 @@ public class CubeRepo extends HashMap<String, Cube> {
     public static CubeRepo load() {
         CubeRepo cubeRepo = new CubeRepo();
 
-        final String CUBES_DIR = System.getenv("AGNOS_CUBES_DIR");
+        String CUBES_DIR = System.getenv("AGNOS_CUBES_DIR");
 
-        final File folder = new File(CUBES_DIR);
+        File folder = new File(CUBES_DIR);
         System.out.println("Cube base dir: " + folder.getAbsolutePath());
         for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
             String fileName = fileEntry.getName();
@@ -43,12 +43,12 @@ public class CubeRepo extends HashMap<String, Cube> {
     }
 
     public void refresh() {
-        this.clear();
-        this.putAll(CubeRepo.load());
+        clear();
+        putAll(load());
     }
 
     public Cube getCube(String cubeName) {
-        return this.get(cubeName);
+        return get(cubeName);
     }
 
 }

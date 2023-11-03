@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import hu.agnos.cube.Cube;
-import hu.agnos.cube.meta.drillDto.CubeQuery;
-import hu.agnos.cube.meta.dto.CubeList;
-import hu.agnos.cube.meta.dto.CubeMetaDTO;
-import hu.agnos.cube.meta.dto.DimensionDTO;
-import hu.agnos.cube.meta.dto.ResultSet;
+import hu.agnos.cube.meta.queryDto.CubeQuery;
+import hu.agnos.cube.meta.resultDto.CubeList;
+import hu.agnos.cube.meta.resultDto.CubeMetaDTO;
+import hu.agnos.cube.meta.resultDto.DimensionDTO;
+import hu.agnos.cube.meta.resultDto.ResultSet;
 import hu.agnos.cube.server.repository.CubeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,11 +29,7 @@ public class CubeService {
         Map<String, CubeMetaDTO> cubeMap = new HashMap<>();
         for (String cubeName : cubeRepo.keySet()) {
             Cube c = cubeRepo.getCube(cubeName);
-
             Date agnosCreatedDate = c.getCreatedDate();
-//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//            String createdDateString = dateFormat.format(agnosCreatedDate);
-
             List<DimensionDTO> dimensionHeader = c.getDimensions().stream().map(DimensionDTO::fromDimension).toList();
             String[] measureHeader = c.getMeasureHeader();
 
@@ -49,13 +45,13 @@ public class CubeService {
         return statement.executeQueries(query.baseVector(), query.drillVectors(), query.originalDrills());
     }
 
-    public String[] getDimensionHeader(String cubeName) {
-        Cube cube = cubeRepo.getCube(cubeName);
-        return cube.getDimensionHeader();
-    }
-
-    public String[] getMeasureHeader(String cubeName) {
-        Cube cube = cubeRepo.getCube(cubeName);
-        return cube.getMeasureHeader();
-    }
+//    public String[] getDimensionHeader(String cubeName) {
+//        Cube cube = cubeRepo.getCube(cubeName);
+//        return cube.getDimensionHeader();
+//    }
+//
+//    public String[] getMeasureHeader(String cubeName) {
+//        Cube cube = cubeRepo.getCube(cubeName);
+//        return cube.getMeasureHeader();
+//    }
 }

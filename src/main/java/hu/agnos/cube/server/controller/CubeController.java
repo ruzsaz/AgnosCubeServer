@@ -1,10 +1,8 @@
 package hu.agnos.cube.server.controller;
 
-import java.util.Optional;
-
-import hu.agnos.cube.meta.drillDto.CubeQuery;
-import hu.agnos.cube.meta.dto.CubeList;
-import hu.agnos.cube.meta.dto.ResultSet;
+import hu.agnos.cube.meta.queryDto.CubeQuery;
+import hu.agnos.cube.meta.resultDto.CubeList;
+import hu.agnos.cube.meta.resultDto.ResultSet;
 import hu.agnos.cube.server.service.CubeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 /**
- *
  * @author parisek
  */
 @RestController
@@ -42,12 +41,5 @@ public class CubeController {
         return result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
-//    @GetMapping("/dimension_header")
-//    ResponseEntity<?> getDimensionHeader(@RequestParam(value = "name") String cubeName) {
-//        Optional<String[]> result = Optional.ofNullable(cubeService.getDimensionHeader(cubeName));
-//        return result.map(response -> ResponseEntity.ok().body(response))
-//                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-//    }
 
 }
