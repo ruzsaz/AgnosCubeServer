@@ -29,6 +29,7 @@ public class CubeController {
 
     @PostMapping(value = "/data", consumes = "application/json", produces = "application/json")
     ResponseEntity<?> getData(@RequestBody CubeQuery query) {
+        System.out.println("data req: " + query.cubeName());
         Optional<ResultSet[]> result = Optional.ofNullable(cubeService.getData(query));
         return result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));

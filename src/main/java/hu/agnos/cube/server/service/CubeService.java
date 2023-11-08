@@ -42,6 +42,7 @@ public class CubeService {
     public ResultSet[] getData(CubeQuery query) {
         Cube cube = cubeRepo.getCube(query.cubeName());
         NativeStatement statement = new NativeStatement(cube);
+
         return statement.executeQueries(query.baseVector(), query.drillVectors(), query.originalDrills());
     }
 
