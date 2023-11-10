@@ -3,6 +3,7 @@ package hu.agnos.cube.server.controller;
 import hu.agnos.cube.meta.queryDto.CubeQuery;
 import hu.agnos.cube.meta.resultDto.CubeList;
 import hu.agnos.cube.meta.resultDto.ResultSet;
+import hu.agnos.cube.server.service.CubeListService;
 import hu.agnos.cube.server.service.CubeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-/**
- * @author parisek
- */
 @RestController
 public class CubeController {
 
     private final Logger log = LoggerFactory.getLogger(CubeController.class);
+
+    @Autowired
+    private CubeListService cubeListService;
 
     @Autowired
     private CubeService cubeService;
@@ -37,7 +38,7 @@ public class CubeController {
 
     @GetMapping("/cube_list")
     ResponseEntity<?> getCubeList() {
-        CubeList cubeNameAndList = cubeService.getCubeList();
+        CubeList cubeNameAndList = cubeListService.getCubeList();
         Optional<CubeList> result = Optional.ofNullable(cubeNameAndList);
         return result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
