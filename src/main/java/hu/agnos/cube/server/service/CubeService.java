@@ -13,11 +13,9 @@ import hu.agnos.cube.Cube;
 import hu.agnos.cube.dimension.Dimension;
 import hu.agnos.cube.dimension.Node;
 import hu.agnos.cube.driver.zolikaokos.DataRetriever;
-import hu.agnos.cube.driver.zolikaokos.Problem;
-import hu.agnos.cube.extraCalculation.PostCalculation;
+import hu.agnos.cube.driver.zolikaokos.ProblemFactory;
 import hu.agnos.cube.meta.queryDto.BaseVectorCoordinateForCube;
 import hu.agnos.cube.meta.queryDto.CubeQuery;
-import hu.agnos.cube.meta.queryDto.DrillVector;
 import hu.agnos.cube.meta.queryDto.DrillVectorForCube;
 import hu.agnos.cube.meta.resultDto.ResultElement;
 import hu.agnos.cube.meta.resultDto.ResultSet;
@@ -93,13 +91,14 @@ public class CubeService {
      */
     private DataRetriever createDataRetriever(Cube cube, List<BaseVectorCoordinateForCube> baseVector, List<DrillVectorForCube> drillVectors, int numberOfDrills) {
         DataRetriever retriever = new DataRetriever();
+        ProblemFactory problemFactory = new ProblemFactory(cube);
         for (int i = 0; i < numberOfDrills; i++) {
             DrillVectorForCube drillVector = drillVectors.get(i);
             Optional<List<List<Node>>> newBaseVectorArray = QueryGenerator.getCoordinatesOfDrill(cube.getDimensions(), cube.getPostCalculations(), baseVector, drillVector);
 
             if (newBaseVectorArray.isPresent()) {
                 for (List<Node> nodes : newBaseVectorArray.get()) {
-                    retriever.addProblem(new Problem(cube, i, nodes));
+                    retriever.addProblem(problemFactory.createProblem(i, nodes));
                 }
             }
         }
@@ -120,8 +119,8 @@ public class CubeService {
 
     private static int dimIndex(Cube cube) {
         if (!cube.getPostCalculations().isEmpty()) {
-            Dimension d = cube.getPostCalculations().get(0).dimension();
-            return cube.getDimensions().indexOf(d);
+            Dimension dimension = cube.getPostCalculations().get(0).dimension();
+            return cube.getDimensions().indexOf(dimension);
         }
         return -1;
     }
