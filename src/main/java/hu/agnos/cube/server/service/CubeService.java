@@ -30,11 +30,11 @@ public class CubeService {
     @Autowired
     CubeRepo cubeRepo;
 
-    public ResultSet[] getData(CubeQuery query) {
+    public ResultSet[] getData(CubeQuery query, int version) {
         Cube cube = cubeRepo.getCube(query.cubeName());
         int numberOfDifferentDrills = query.originalDrills().size();
 
-        DataRetriever retriever = createDataRetriever(cube, query.baseVector(), query.drillVectors(), numberOfDifferentDrills);
+        DataRetriever retriever = createDataRetriever(cube, query.baseVector(), query.drillVectors(), numberOfDifferentDrills, version);
         List<Future<ResultElement>> futures = retriever.computeAll();
         List<List<ResultElement>> tempResult = extractResults(futures, numberOfDifferentDrills);
 
@@ -89,7 +89,7 @@ public class CubeService {
      * @param numberOfDrills Number of original drills
      * @return The collection of tasks, as a DataRetriever object
      */
-    private DataRetriever createDataRetriever(Cube cube, List<BaseVectorCoordinateForCube> baseVector, List<DrillVectorForCube> drillVectors, int numberOfDrills) {
+    private DataRetriever createDataRetriever(Cube cube, List<BaseVectorCoordinateForCube> baseVector, List<DrillVectorForCube> drillVectors, int numberOfDrills, int version) {
         DataRetriever retriever = new DataRetriever();
         ProblemFactory problemFactory = new ProblemFactory(cube);
         for (int i = 0; i < numberOfDrills; i++) {
@@ -98,7 +98,7 @@ public class CubeService {
 
             if (newBaseVectorArray.isPresent()) {
                 for (List<Node> nodes : newBaseVectorArray.get()) {
-                    retriever.addProblem(problemFactory.createProblem(i, nodes));
+                    retriever.addProblem(problemFactory.createProblem(i, nodes, version));
                 }
             }
         }
