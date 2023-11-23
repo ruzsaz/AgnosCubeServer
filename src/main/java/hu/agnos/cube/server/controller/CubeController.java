@@ -68,12 +68,12 @@ public class CubeController {
         long end1 = System.currentTimeMillis();
 
 
-        System.out.println("Nyuszi: " + (end1-start1) + " ms");
+        System.out.println("Bakkecske: " + (end4-start4) + " ms");
         System.out.println("Kecske: " + (end6-start6) + " ms");
-        System.out.println("Kecske+: " + (end3-start3) + " ms");
+        System.out.println("Kecske+: " + (end5-start5) + " ms");
 
 
-        return answ3;
+        return answ4;
     }
 
     @GetMapping("/cube_list")
