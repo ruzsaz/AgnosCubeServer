@@ -1,5 +1,7 @@
 package hu.agnos.cube.server.repository;
 
+import hu.agnos.cube.ClassicalCube;
+import hu.agnos.cube.CountDistinctCube;
 import hu.agnos.cube.Cube;
 
 import java.io.File;
@@ -30,9 +32,18 @@ public class CubeRepo extends HashMap<String, Cube> {
 
                 try (FileInputStream fileIn = new FileInputStream(fileEntry); ObjectInputStream in = new ObjectInputStream(fileIn)) {
                     System.out.println("loading " + fileName + "...");
-                    Cube cube = (Cube) in.readObject();
-                    cube.init();
-                    cubeRepo.put(cube.getName(), cube);
+                    Object o = in.readObject();
+                    if (o.getClass().equals(CountDistinctCube.class )){
+                        CountDistinctCube cube = (CountDistinctCube) o;
+                        cube.init();
+                        cubeRepo.put(cube.getName(), cube);
+                    }
+                    else {
+                        ClassicalCube cube = (ClassicalCube) o;
+                        cube.init();
+                        cubeRepo.put(cube.getName(), cube);
+                    }
+
                 } catch (IOException | ClassNotFoundException ex) {
                     Logger.getLogger(CubeRepo.class.getName()).log(Level.SEVERE, "Cube loading failed.", ex);
                 }
