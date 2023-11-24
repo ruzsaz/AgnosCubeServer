@@ -31,23 +31,11 @@ public class CubeController {
     @PostMapping(value = "/data", consumes = "application/json", produces = "application/json")
     ResponseEntity<?> getData(@RequestBody CubeQuery query) {
 
-        long start3 = System.currentTimeMillis();
-        Optional<ResultSet[]> result3 = Optional.ofNullable(cubeService.getData(query, 3));
-        ResponseEntity<?> answ3 = result3.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        long end3 = System.currentTimeMillis();
-
-        long start2 = System.currentTimeMillis();
-        Optional<ResultSet[]> result2 = Optional.ofNullable(cubeService.getData(query, 2));
-        ResponseEntity<?> answ2 = result2.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        long end2 = System.currentTimeMillis();
-
-        long start4 = System.currentTimeMillis();
-        Optional<ResultSet[]> result4 = Optional.ofNullable(cubeService.getData(query, 1));
-        ResponseEntity<?> answ4 = result4.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        long end4 = System.currentTimeMillis();
+//        long start4 = System.currentTimeMillis();
+//        Optional<ResultSet[]> result4 = Optional.ofNullable(cubeService.getData(query, 1));
+//        ResponseEntity<?> answ4 = result4.map(response -> ResponseEntity.ok().body(response))
+//                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+//        long end4 = System.currentTimeMillis();
 
         long start5 = System.currentTimeMillis();
         Optional<ResultSet[]> result5 = Optional.ofNullable(cubeService.getData(query, 3));
@@ -55,25 +43,19 @@ public class CubeController {
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         long end5 = System.currentTimeMillis();
 
-        long start6 = System.currentTimeMillis();
-        Optional<ResultSet[]> result6 = Optional.ofNullable(cubeService.getData(query, 2));
-        ResponseEntity<?> answ6 = result6.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        long end6 = System.currentTimeMillis();
-
-        long start1 = System.currentTimeMillis();
-        Optional<ResultSet[]> result1 = Optional.ofNullable(cubeService.getData(query, 1));
-        ResponseEntity<?> answ1 = result1.map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        long end1 = System.currentTimeMillis();
+//        long start6 = System.currentTimeMillis();
+//        Optional<ResultSet[]> result6 = Optional.ofNullable(cubeService.getData(query, 2));
+//        ResponseEntity<?> answ6 = result6.map(response -> ResponseEntity.ok().body(response))
+//                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+//        long end6 = System.currentTimeMillis();
 
 
-        System.out.println("Bakkecske: " + (end4-start4) + " ms");
-        System.out.println("Kecske: " + (end6-start6) + " ms");
+//        System.out.println("Bakkecske: " + (end4-start4) + " ms");
+//        System.out.println("Kecske: " + (end6-start6) + " ms");
         System.out.println("Kecske+: " + (end5-start5) + " ms");
 
 
-        return answ4;
+        return answ5;
     }
 
     @GetMapping("/cube_list")
