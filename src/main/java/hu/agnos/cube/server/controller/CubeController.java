@@ -32,19 +32,19 @@ public class CubeController {
     ResponseEntity<?> getData(@RequestBody CubeQuery query) {
 
 //        long start4 = System.currentTimeMillis();
-//        Optional<ResultSet[]> result4 = Optional.ofNullable(cubeService.getData(query, 1));
+//        Optional<ResultSet> result4 = Optional.ofNullable(cubeService.getData(query, 1));
 //        ResponseEntity<?> answ4 = result4.map(response -> ResponseEntity.ok().body(response))
 //                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 //        long end4 = System.currentTimeMillis();
 
         long start5 = System.currentTimeMillis();
-        Optional<ResultSet[]> result5 = Optional.ofNullable(cubeService.getData(query, 3));
+        Optional<ResultSet> result5 = Optional.ofNullable(cubeService.getData(query, 3));
         ResponseEntity<?> answ5 = result5.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         long end5 = System.currentTimeMillis();
 
 //        long start6 = System.currentTimeMillis();
-//        Optional<ResultSet[]> result6 = Optional.ofNullable(cubeService.getData(query, 2));
+//        Optional<ResultSet> result6 = Optional.ofNullable(cubeService.getData(query, 2));
 //        ResponseEntity<?> answ6 = result6.map(response -> ResponseEntity.ok().body(response))
 //                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 //        long end6 = System.currentTimeMillis();

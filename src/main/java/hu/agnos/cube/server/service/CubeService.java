@@ -30,24 +30,21 @@ public class CubeService {
     @Autowired
     CubeRepo cubeRepo;
 
-    public ResultSet[] getData(CubeQuery query, int version) {
+    public ResultSet getData(CubeQuery query, int version) {
         Cube cube = cubeRepo.getCube(query.cubeName());
-        int numberOfDifferentDrills = query.originalDrills().size();
 
-        DataRetriever retriever = createDataRetriever(cube, query.baseVector(), query.drillVectors(), numberOfDifferentDrills, version);
+        DataRetriever retriever = createDataRetriever(cube, query.baseVector(), query.drillVector(), version);
         List<Future<ResultElement>> futures = retriever.computeAll();
-        List<List<ResultElement>> tempResult = extractResults(futures, numberOfDifferentDrills);
+        List<ResultElement> tempResult = extractResults(futures);
 
-        ResultSet[] resultSets = new ResultSet[numberOfDifferentDrills];
-        for (int i = 0; i < numberOfDifferentDrills; i++) {
-            resultSets[i] = new ResultSet(cube.getName(),
+        ResultSet resultSet = new ResultSet(cube.getName(),
                     cube.getDimensionHeader(),
                     Arrays.asList(cube.getMeasureHeader()),
-                    query.originalDrills().get(i),
-                    query.drillVectors().get(i).drillRequired(),
-                    tempResult.get(i));
-        }
-        return CubeService.postProcess(cube, resultSets);
+                    query.originalDrill(),
+                    query.drillVector().drillRequired(),
+                    tempResult);
+
+        return CubeService.postProcess(cube, resultSet);
     }
 
     /**
@@ -55,28 +52,20 @@ public class CubeService {
      * to the original drills
      *
      * @param futures List of future ResultElements
-     * @param numberOfDifferentDrills Number of drills the Futures were made from
      * @return A list of ResultElements for each original drill, as a List with the same
      * order the original drills made in.
      */
-    private List<List<ResultElement>> extractResults(List<Future<ResultElement>> futures, int numberOfDifferentDrills) {
-        List<List<ResultElement>> tempResult = new ArrayList<>();
-        for (int i = 0; i < numberOfDifferentDrills; i++) {
-            List<ResultElement> tempResultForDrill = new ArrayList<>();
-            tempResult.add(tempResultForDrill);
-        }
-
+    private List<ResultElement> extractResults(List<Future<ResultElement>> futures) {
+        List<ResultElement> resultElements = new ArrayList<>();
         for (Future<ResultElement> future : futures) {
             try {
                 ResultElement resultElement = future.get();
-                int drillVectorId = resultElement.drillVectorId();
-                List<ResultElement> tempResultForDrill = tempResult.get(drillVectorId);
-                tempResultForDrill.add(resultElement);
+                resultElements.add(resultElement);
             } catch (InterruptedException | ExecutionException ex) {
                 Logger.getLogger(CubeService.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return tempResult;
+        return resultElements;
     }
 
     /**
@@ -85,36 +74,30 @@ public class CubeService {
      *
      * @param cube Cube to process
      * @param baseVector Base vector the drills are based in, personalized for the cube
-     * @param drillVectors The drill vectors personalized for the cube
-     * @param numberOfDrills Number of original drills
+     * @param drillVector The drill vector personalized for the cube
      * @return The collection of tasks, as a DataRetriever object
      */
-    private DataRetriever createDataRetriever(Cube cube, List<BaseVectorCoordinateForCube> baseVector, List<DrillVectorForCube> drillVectors, int numberOfDrills, int version) {
+    private DataRetriever createDataRetriever(Cube cube, List<BaseVectorCoordinateForCube> baseVector, DrillVectorForCube drillVector, int version) {
         DataRetriever retriever = new DataRetriever();
         ProblemFactory problemFactory = new ProblemFactory(cube);
-        for (int i = 0; i < numberOfDrills; i++) {
-            DrillVectorForCube drillVector = drillVectors.get(i);
-            Optional<List<List<Node>>> newBaseVectorArray = QueryGenerator.getCoordinatesOfDrill(cube.getDimensions(), cube.getPostCalculations(), baseVector, drillVector);
-
-            if (newBaseVectorArray.isPresent()) {
-                for (List<Node> nodes : newBaseVectorArray.get()) {
-                    retriever.addProblem(problemFactory.createProblem(i, nodes, version));
-                }
+        Optional<List<List<Node>>> newBaseVectorArray = QueryGenerator.getCoordinatesOfDrill(cube.getDimensions(), cube.getPostCalculations(), baseVector, drillVector);
+        if (newBaseVectorArray.isPresent()) {
+            for (List<Node> nodes : newBaseVectorArray.get()) {
+                retriever.addProblem(problemFactory.createProblem(nodes, version));
             }
         }
+
         return retriever;
     }
 
     // TODO: párhuzamosítani
-    private static ResultSet[] postProcess(Cube cube, ResultSet[] resultSets) {
+    private static ResultSet postProcess(Cube cube, ResultSet resultSet) {
         int dimIndex = CubeService.dimIndex(cube);
         if (dimIndex >= 0) {
             List<Integer> kaplanMeierIndices = KaplanMeier.getKaplanMeierIndicatorIndices(cube);
-            for (ResultSet r : resultSets) {
-                KaplanMeier.process(r, kaplanMeierIndices, dimIndex);
-            }
+            KaplanMeier.process(resultSet, kaplanMeierIndices, dimIndex);
         }
-        return resultSets;
+        return resultSet;
     }
 
     private static int dimIndex(Cube cube) {
