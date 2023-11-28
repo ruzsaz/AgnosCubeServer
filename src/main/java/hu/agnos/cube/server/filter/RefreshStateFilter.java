@@ -1,14 +1,19 @@
 package hu.agnos.cube.server.filter;
 
-import hu.agnos.cube.server.entity.RefreshInfoHolder;
-import jakarta.servlet.*;
+import java.io.IOException;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import hu.agnos.cube.server.entity.RefreshInfoHolder;
 
 @Component
 @Order(1)

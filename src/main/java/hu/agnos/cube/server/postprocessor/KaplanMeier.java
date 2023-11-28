@@ -2,7 +2,6 @@ package hu.agnos.cube.server.postprocessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import hu.agnos.cube.Cube;
@@ -21,7 +20,6 @@ public class KaplanMeier {
             responseList.sort(sorter);
 
             ResultElement previous = null;
-            //double[] accumulator = new double[num];
             for (ResultElement re : responseList) {
                 if (!KaplanMeier.isNew(previous, re, sorter)) {
                     for (int i = 0; i < num; i++) {
@@ -42,7 +40,6 @@ public class KaplanMeier {
                 if (KaplanMeier.isNew(previous, re, sorter)) {
                     Arrays.fill(accumulator, 1.0);
                 } else {
-                    assert previous != null;
                     previous.header()[dimIndex] = null;
                 }
                 for (int i = 0; i < num; i++) {

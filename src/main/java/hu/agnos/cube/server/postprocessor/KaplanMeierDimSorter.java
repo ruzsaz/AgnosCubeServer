@@ -1,19 +1,28 @@
 package hu.agnos.cube.server.postprocessor;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import hu.agnos.cube.meta.resultDto.ResultElement;
 
-public class KaplanMeierDimSorter implements Comparator<ResultElement> {
+/**
+ * Comparator for sorting dimension-value data rows before Kaplan-Meier calculations. The desired order of elements is
+ * lexicographical sorting by the dimension coordinate values, while the Kaplan-Meier dimension is the last in the
+ * dimensions' order.
+ */
+public class KaplanMeierDimSorter implements Comparator<ResultElement>, Serializable {
 
     private final int index;
 
+    /**
+     * Initializes the comparator by setting the Kaplan-Meier dimension.
+     *
+     * @param index Index of the Kaplan-Meier dimension in the array of dimensions
+     */
     public KaplanMeierDimSorter(int index) {
-        System.out.println("KM: " + index);
         this.index = index;
     }
 
-    // TODO: tesztet írni
     @Override
     public int compare(ResultElement element1, ResultElement element2) {
         int length = element1.header().length;
@@ -29,7 +38,7 @@ public class KaplanMeierDimSorter implements Comparator<ResultElement> {
         return element1.header()[index].knownId().compareTo(element2.header()[index].knownId());
     }
 
-    boolean isSameWithoutIndex(ResultElement element1, ResultElement element2) {
+    protected boolean isSameWithoutIndex(ResultElement element1, ResultElement element2) {
         if (element1 == null || element2 == null) {
             return false;
         }

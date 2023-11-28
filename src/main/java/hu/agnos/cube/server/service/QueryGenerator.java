@@ -9,9 +9,12 @@ import hu.agnos.cube.meta.queryDto.DrillVectorForCube;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class QueryGenerator {
+/**
+ * Creates the required set of atomic queries (that looks for data in a single coordinate value) from a baseVector and
+ * drillVector.
+ */
+public final class QueryGenerator {
 
     /**
      * Calculates all the dimension element combinations required to get.
@@ -23,7 +26,7 @@ public class QueryGenerator {
      * @return All the required [node, node, ... node] coordinate values folded into an Optional,
      * or an empty Optional if the requested node is missing (= no value for the given coordinate present in the cube)
      */
-    public static Optional<List<List<Node>>> getCoordinatesOfDrill(List<Dimension> dimensions, List<PostCalculation> postCalculations, List<BaseVectorCoordinateForCube> baseNodeCodes, DrillVectorForCube drillVector) {
+    public static List<List<Node>> getCoordinatesOfDrill(List<Dimension> dimensions, List<PostCalculation> postCalculations, List<BaseVectorCoordinateForCube> baseNodeCodes, DrillVectorForCube drillVector) {
 
         int coordinateCount = drillVector.drillRequired().length;
 
@@ -32,7 +35,7 @@ public class QueryGenerator {
         for (int i = 0; i < coordinateCount; i++) {
             Node baseNode = dimensions.get(i).getNodeByKnownIdPath(baseNodeCodes.get(i).levelValuesString());
             if (baseNode == null) { // The requested base level coordinate is missing from the cube
-                return Optional.empty();
+                return new ArrayList<>(1);
             } else {
                 if (drillVector.drillRequired()[i].isRequired() || QueryGenerator.isExtraDrillRequired(postCalculations, dimensions.get(i), baseNode)) {
                     childrenList.add(List.of(dimensions.get(i).getChildrenOf(baseNode)));
@@ -41,15 +44,7 @@ public class QueryGenerator {
                 }
             }
         }
-
-        List<List<Node>> result = SetFunctions.cartesianProductFromList(childrenList);
-
-        // Only for test
-        for (List<Node> nodes : result) {
-            // System.out.println(nodes.stream().map(Node::getCode).collect(Collectors.joining(":")));
-        }
-
-        return Optional.of(result);
+        return SetFunctions.cartesianProductFromList(childrenList);
     }
 
     /**

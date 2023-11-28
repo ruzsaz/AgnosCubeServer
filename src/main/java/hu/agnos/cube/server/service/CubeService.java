@@ -3,7 +3,6 @@ package hu.agnos.cube.server.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -24,39 +23,52 @@ import hu.agnos.cube.server.repository.CubeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service to determine the results of a series of queries, based on the same baseVector.
+ */
 @Service
 public class CubeService {
 
     @Autowired
     CubeRepo cubeRepo;
 
-    public ResultSet getData(CubeQuery query, int version) {
-        Cube cube = cubeRepo.getCube(query.cubeName());
+    // TODO: tesztelni a KM párhuzamos futását
+    /**
+     * Determines the results of a series of queries from the CubeDriver parallel, and collects the answers.
+     * The queries must be based on the same baseVector.
+     *
+     * @param queries List of queries to resolve; the queries should be based on the same baseVector
+     * @return The answers for the queries
+     */
+    public List<ResultSet> getData(List<CubeQuery> queries) {
+        List<ResultSet> resultSetList = new ArrayList<>(queries.size());
+        Cube cube = cubeRepo.getCube(queries.get(0).cubeName());
+        for (CubeQuery query : queries) {
+            DataRetriever retriever = CubeService.createDataRetriever(cube, query.baseVector(), query.drillVector());
+            List<Future<ResultElement>> futures = retriever.computeAll();
+            List<ResultElement> tempResult = CubeService.extractResults(futures);
 
-        DataRetriever retriever = createDataRetriever(cube, query.baseVector(), query.drillVector(), version);
-        List<Future<ResultElement>> futures = retriever.computeAll();
-        List<ResultElement> tempResult = extractResults(futures);
-
-        ResultSet resultSet = new ResultSet(cube.getName(),
+            ResultSet resultSet = new ResultSet(cube.getName(),
                     cube.getDimensionHeader(),
                     Arrays.asList(cube.getMeasureHeader()),
                     query.originalDrill(),
                     query.drillVector().drillRequired(),
                     tempResult);
-
-        return CubeService.postProcess(cube, resultSet);
+            //resultSetList.add(CubeService.postProcess(cube, resultSet));  // soros
+            resultSetList.add(resultSet);                                   // párhuzamos
+        }
+        //return resultSetList;         // soros
+        return resultSetList.parallelStream().map(r -> CubeService.postProcess(cube, r)).toList();  // párhuzamos
     }
 
     /**
-     * Extract the results of individual data-queries, and collect them
-     * to the original drills
+     * Extract the results of individual data-queries for the same drill, and collect them.
      *
-     * @param futures List of future ResultElements
-     * @return A list of ResultElements for each original drill, as a List with the same
-     * order the original drills made in.
+     * @param futures List of futures containing ResultElements
+     * @return A list of ResultElements for the drill.
      */
-    private List<ResultElement> extractResults(List<Future<ResultElement>> futures) {
-        List<ResultElement> resultElements = new ArrayList<>();
+    private static List<ResultElement> extractResults(List<Future<ResultElement>> futures) {
+        List<ResultElement> resultElements = new ArrayList<>(futures.size());
         for (Future<ResultElement> future : futures) {
             try {
                 ResultElement resultElement = future.get();
@@ -69,28 +81,32 @@ public class CubeService {
     }
 
     /**
-     * Creates a collection of tasks to run to get the results for all the drill request.
-     * A task contains only one data retrieval, along a single dimension-coordinate tuple.
+     * Creates a collection of tasks to run to get the result for a drill request.
+     * A task contains only one atomic data retrieval, along a single dimension-coordinate tuple.
      *
      * @param cube Cube to process
      * @param baseVector Base vector the drills are based in, personalized for the cube
      * @param drillVector The drill vector personalized for the cube
      * @return The collection of tasks, as a DataRetriever object
      */
-    private DataRetriever createDataRetriever(Cube cube, List<BaseVectorCoordinateForCube> baseVector, DrillVectorForCube drillVector, int version) {
+    private static DataRetriever createDataRetriever(Cube cube, List<BaseVectorCoordinateForCube> baseVector, DrillVectorForCube drillVector) {
         DataRetriever retriever = new DataRetriever();
         ProblemFactory problemFactory = new ProblemFactory(cube);
-        Optional<List<List<Node>>> newBaseVectorArray = QueryGenerator.getCoordinatesOfDrill(cube.getDimensions(), cube.getPostCalculations(), baseVector, drillVector);
-        if (newBaseVectorArray.isPresent()) {
-            for (List<Node> nodes : newBaseVectorArray.get()) {
-                retriever.addProblem(problemFactory.createProblem(nodes, version));
-            }
+        List<List<Node>> newBaseVectorArray = QueryGenerator.getCoordinatesOfDrill(cube.getDimensions(), cube.getPostCalculations(), baseVector, drillVector);
+        for (List<Node> nodes : newBaseVectorArray) {
+            retriever.addProblem(problemFactory.createProblem(nodes));
         }
-
         return retriever;
     }
 
-    // TODO: párhuzamosítani
+    /**
+     * Post-process (like Kaplan-Meier calculation) the result of a drill if required.
+     * The input resultSet is modified, but the same is returned too.
+     *
+     * @param cube Cube to look for a post-processing directive
+     * @param resultSet ResultSet to post-process
+     * @return The post-calculated resultSet
+     */
     private static ResultSet postProcess(Cube cube, ResultSet resultSet) {
         int dimIndex = CubeService.dimIndex(cube);
         if (dimIndex >= 0) {
@@ -100,6 +116,12 @@ public class CubeService {
         return resultSet;
     }
 
+    /**
+     * If post-calculation is required, determines the index of the post-calculation's dimension.
+     *
+     * @param cube The cube to look for post-calculations
+     * @return The index of the dimension, or -1 if post-calculations are not required
+     */
     private static int dimIndex(Cube cube) {
         if (!cube.getPostCalculations().isEmpty()) {
             Dimension dimension = cube.getPostCalculations().get(0).dimension();

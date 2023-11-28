@@ -17,10 +17,20 @@ public class RefreshController {
     @PostMapping("/refresh")
     public String refresh() {
         refreshInfoHolder.setRefreshInProgress(true);
-        cubeRepo.refresh();
+        cubeRepo.refreshFromCubeDirectory();
         refreshInfoHolder.setLastRefreshTimeInMilliseconds(System.currentTimeMillis());
         refreshInfoHolder.setRefreshInProgress(false);
         return "Refreshed";
+    }
+
+    @PostMapping("/restart")
+    public String restart() {
+        refreshInfoHolder.setRefreshInProgress(true);
+        cubeRepo.clear();
+        cubeRepo.refreshFromCubeDirectory();
+        refreshInfoHolder.setLastRefreshTimeInMilliseconds(System.currentTimeMillis());
+        refreshInfoHolder.setRefreshInProgress(false);
+        return "Restarted";
     }
 
 }
