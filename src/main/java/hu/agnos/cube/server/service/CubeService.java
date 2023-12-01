@@ -54,10 +54,8 @@ public class CubeService {
                     query.originalDrill(),
                     query.drillVector().drillRequired(),
                     tempResult);
-            //resultSetList.add(CubeService.postProcess(cube, resultSet));  // soros
-            resultSetList.add(resultSet);                                   // párhuzamos
+            resultSetList.add(resultSet);
         }
-        //return resultSetList;         // soros
         return resultSetList.parallelStream().map(r -> CubeService.postProcess(cube, r)).toList();  // párhuzamos
     }
 

@@ -77,7 +77,6 @@ public class CubeRepo extends HashMap<String, Cube> {
                 cube.setHash(fileHash);
                 result = cube;
             }
-
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(CubeRepo.class.getName()).log(Level.SEVERE, "Cube loading failed.", ex);
         }
