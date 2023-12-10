@@ -77,6 +77,17 @@ public class CubeRepo extends HashMap<String, Cube> {
                 cube.setHash(fileHash);
                 result = cube;
             }
+//            if (file.getName().equals("PrevalenciaCrc.cube")) {
+//                FileOutputStream fileOut = new FileOutputStream(file.getName() + "2");
+//                ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//                result.setName("CrcPrevalencia");
+//                out.writeObject(result);
+//                out.close();
+//                fileOut.close();
+//                System.out.println("Serialized data is saved ");
+//            }
+
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(CubeRepo.class.getName()).log(Level.SEVERE, "Cube loading failed.", ex);
         }
