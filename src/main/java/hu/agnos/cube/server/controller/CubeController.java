@@ -36,7 +36,7 @@ public class CubeController {
         ResponseEntity<?> answer = result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         long end = System.currentTimeMillis();
-        System.out.println("Kecske+: " + (end-start) + " ms");
+        log.info("Data access in " + (end-start) + " ms");
         return answer;
     }
 

@@ -4,4 +4,4 @@ RUN mkdir /usr/local/agnos/ /usr/local/agnos/Cubes
 ENV AGNOS_CUBES_DIR=/usr/local/agnos/Cubes
 ADD ./AgnosCubeServer.jar cube-server.jar
 EXPOSE 7979
-CMD java -jar cube-server.jar
+CMD java -jar -Dspring.profiles.active=prod cube-server.jar
