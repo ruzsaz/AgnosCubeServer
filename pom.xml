@@ -15,8 +15,8 @@
     <description>OLAP server implementation</description>
     <properties>
         <java.version>17</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
@@ -41,21 +41,39 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.34</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>hu.agnos</groupId>
             <artifactId>AgnosCubeMeta</artifactId>
             <version>4.0</version>
             <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>hu.agnos</groupId>
             <artifactId>AgnosCubeDriver</artifactId>
             <version>4.0</version>
             <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>8.0.1</version>
+            <version>8.0</version>
             <type>jar</type>
         </dependency>
     </dependencies>
@@ -68,5 +86,12 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
 
 </project>
