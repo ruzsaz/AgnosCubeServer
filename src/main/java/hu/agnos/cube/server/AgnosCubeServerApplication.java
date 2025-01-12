@@ -15,6 +15,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AgnosCubeServerApplication {
 
+    /**
+     * Starts the CubeServer application.
+     *
+     * @param args Command line arguments
+     */
     public static void main(String[] args) {
         SpringApplication.run(AgnosCubeServerApplication.class, args);
     }

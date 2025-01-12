@@ -15,6 +15,9 @@ import org.springframework.stereotype.Component;
 
 import hu.agnos.cube.server.entity.RefreshInfoHolder;
 
+/**
+ * Filter to check if a refresh is in progress or if the refresh is too frequent.
+ */
 @Component
 @Order(1)
 public class RefreshStateFilter implements Filter {

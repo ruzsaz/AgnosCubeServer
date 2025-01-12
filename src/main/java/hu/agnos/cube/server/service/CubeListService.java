@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import hu.agnos.cube.Cube;
-import hu.agnos.cube.meta.queryDto.CubeQuery;
 import hu.agnos.cube.meta.resultDto.CubeList;
 import hu.agnos.cube.meta.resultDto.CubeMetaDTO;
 import hu.agnos.cube.meta.resultDto.DimensionDTO;

@@ -32,7 +32,15 @@ public class CubeService {
     @Autowired
     CubeRepo cubeRepo;
 
-    // TODO: tesztelni a KM párhuzamos futását
+    /**
+     * Prepares the data cubes for the given cube names: loads the data if not present.
+     *
+     * @param cubeNames List of cube names to prepare
+     */
+    public void prepareCubes(List<String> cubeNames) {
+        cubeNames.parallelStream().forEach(cubeRepo::getCubeAndLoadDataIfNotPresent);
+    }
+
     /**
      * Determines the results of a series of queries from the CubeDriver parallel, and collects the answers.
      * The queries must be based on the same baseVector.
@@ -42,7 +50,7 @@ public class CubeService {
      */
     public List<ResultSet> getData(List<CubeQuery> queries) {
         List<ResultSet> resultSetList = new ArrayList<>(queries.size());
-        Cube cube = cubeRepo.getCube(queries.get(0).cubeName());
+        Cube cube = cubeRepo.getCubeAndLoadDataIfNotPresent(queries.get(0).cubeName());
         for (CubeQuery query : queries) {
             DataRetriever retriever = CubeService.createDataRetriever(cube, query.baseVector(), query.drillVector());
             List<Future<ResultElement>> futures = retriever.computeAll();
@@ -56,7 +64,7 @@ public class CubeService {
                     tempResult);
             resultSetList.add(resultSet);
         }
-        return resultSetList.parallelStream().map(r -> CubeService.postProcess(cube, r)).toList();  // párhuzamos
+        return resultSetList.parallelStream().map(r -> CubeService.postProcess(cube, r)).toList();
     }
 
     /**

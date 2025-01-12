@@ -9,8 +9,21 @@ import hu.agnos.cube.extraCalculation.PostCalculation;
 import hu.agnos.cube.meta.resultDto.ResultElement;
 import hu.agnos.cube.meta.resultDto.ResultSet;
 
-public class KaplanMeier {
+/**
+ * This class is responsible for the Kaplan-Meier post-processing.
+ */
+public final class KaplanMeier {
 
+    private KaplanMeier() {
+    }
+
+    /**
+     * Processes the Kaplan-Meier post-processing.
+     *
+     * @param resultSet              The result set containing the data to process
+     * @param extraCalculatedIndices The indexes of the extra calculated indicators
+     * @param dimIndex               The Kaplan-Meier dimension's index
+     */
     public static void process(ResultSet resultSet, List<Integer> extraCalculatedIndices, int dimIndex) {
         int num = extraCalculatedIndices.size();
 

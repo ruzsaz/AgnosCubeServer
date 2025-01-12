@@ -16,6 +16,9 @@ import java.util.List;
  */
 public final class QueryGenerator {
 
+    private QueryGenerator() {
+    }
+
     /**
      * Calculates all the dimension element combinations required to get.
      *
