@@ -32,6 +32,9 @@ public class CubeService {
     @Autowired
     CubeRepo cubeRepo;
 
+    @Autowired
+    CacheCreator rzcreator;
+
     /**
      * Prepares the data cubes for the given cube names: loads the data if not present.
      *
@@ -39,6 +42,10 @@ public class CubeService {
      */
     public void prepareCubes(List<String> cubeNames) {
         cubeNames.parallelStream().forEach(cubeRepo::getCubeAndLoadDataIfNotPresent);
+
+
+        rzcreator.createCache(cubeNames.get(0));
+
     }
 
     /**
@@ -73,7 +80,7 @@ public class CubeService {
      * @param futures List of futures containing ResultElements
      * @return A list of ResultElements for the drill.
      */
-    private static List<ResultElement> extractResults(List<Future<ResultElement>> futures) {
+    static List<ResultElement> extractResults(List<Future<ResultElement>> futures) {
         List<ResultElement> resultElements = new ArrayList<>(futures.size());
         for (Future<ResultElement> future : futures) {
             try {

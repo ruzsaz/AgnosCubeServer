@@ -2,6 +2,7 @@ package hu.agnos.cube.server.repository;
 
 import hu.agnos.cube.CountDistinctCube;
 import hu.agnos.cube.Cube;
+import hu.agnos.cube.server.service.CacheCreator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -143,6 +144,7 @@ public class CubeRepo {
             result.setFileSize(fileSize);
             result.setLastAccessTime(System.currentTimeMillis());
             log.info("Cube data loaded from file: {}", file.getName());
+
         } catch (IOException | ClassNotFoundException ex) {
             log.error("Cube loading failed from file: {}", file.getName(), ex);
         }
