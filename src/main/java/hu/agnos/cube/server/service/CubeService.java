@@ -32,9 +32,6 @@ public class CubeService {
     @Autowired
     CubeRepo cubeRepo;
 
-    @Autowired
-    CacheCreator rzcreator;
-
     /**
      * Prepares the data cubes for the given cube names: loads the data if not present.
      *
@@ -42,10 +39,6 @@ public class CubeService {
      */
     public void prepareCubes(List<String> cubeNames) {
         cubeNames.parallelStream().forEach(cubeRepo::getCubeAndLoadDataIfNotPresent);
-
-
-        rzcreator.createCache(cubeNames.get(0));
-
     }
 
     /**

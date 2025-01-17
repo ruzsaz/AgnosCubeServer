@@ -2,7 +2,6 @@ package hu.agnos.cube.server.repository;
 
 import hu.agnos.cube.CountDistinctCube;
 import hu.agnos.cube.Cube;
-import hu.agnos.cube.server.service.CacheCreator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,8 +30,8 @@ public class CubeRepo {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(CubeRepo.class);
     private final HashMap<String, Cube> cubesMap = new HashMap<>(20);
-    private long maxMemoryInBytes = 800000000L; // 0.5GB, environment variable will override this, if found
-    private static final long EVICTONLYOLDERTHANDURATION = 200L; // 2 seconds
+    private long maxMemoryInBytes = 10 * 1000000000L; // Environment variable will override this, if found
+    private static final long EVICTONLYOLDERTHANDURATION = 200L; // 0.2 seconds
 
     @Getter
     private File cubesFolder;
