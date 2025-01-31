@@ -1,8 +1,9 @@
 FROM openjdk:17-slim
+
 WORKDIR /
 RUN mkdir /usr/local/agnos/ /usr/local/agnos/Cubes
 ENV AGNOS_CUBES_DIR=/usr/local/agnos/Cubes
-ENV CUBES_MEMORY_IN_BYTES=10000000000
 ADD ./AgnosCubeServer.jar cube-server.jar
 EXPOSE 7979
-CMD java -jar -Dspring.profiles.active=prod cube-server.jar
+
+CMD java -Xmx"${CUBESERVER_XMX}" -jar -Dspring.profiles.active=prod cube-server.jar

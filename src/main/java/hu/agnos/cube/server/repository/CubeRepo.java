@@ -15,11 +15,14 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import lombok.Getter;
+import lombok.Synchronized;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -29,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class CubeRepo {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(CubeRepo.class);
-    private final HashMap<String, Cube> cubesMap = new HashMap<>(20);
+    private final Map<String, Cube> cubesMap = new ConcurrentHashMap<>(20);
     private long maxMemoryInBytes = 10 * 1000000000L; // Environment variable will override this, if found
     private static final long EVICTONLYOLDERTHANDURATION = 200L; // 0.2 seconds
 
@@ -41,16 +44,16 @@ public class CubeRepo {
      */
     public CubeRepo() {
         String cubesDir = System.getenv("AGNOS_CUBES_DIR");
-        String maxMemoryInBytesString = System.getenv("CUBES_MEMORY_IN_BYTES");
-        if (maxMemoryInBytesString != null) {
-            maxMemoryInBytes = Long.parseLong(maxMemoryInBytesString);
+        String cubesMemoryLimit = System.getenv("CUBES_MEMORY_LIMIT");
+        if (cubesMemoryLimit != null) {
+            maxMemoryInBytes = 1000000000L * Long.parseLong(cubesMemoryLimit);
         }
         if (cubesDir == null) {
             log.error("AGNOS_CUBES_DIR environment variable is not set, cannot start CubeRepo.");
             return;
         }
         cubesFolder = new File(cubesDir);
-        log.info("CubeRepo started, with base dir: {}. Max. memory allowed: {} KB.", cubesFolder.getAbsolutePath(), maxMemoryInBytes / 1000000);
+        log.info("CubeRepo started, with base dir: {}. Max. memory allowed: {} MB.", cubesFolder.getAbsolutePath(), maxMemoryInBytes / 1000000);
     }
 
     /**
@@ -60,7 +63,7 @@ public class CubeRepo {
      */
     public synchronized void refreshFromCubeDirectory() {
         File[] files = Objects.requireNonNull(cubesFolder.listFiles());
-        Stream.of(files).parallel().forEach(file -> {
+        Stream.of(files).forEach(file -> {
             Optional<Cube> cube = findOrLoad(file);
             cube.ifPresent(this::putCube);
             forceMemoryPolicy(0, 0);
@@ -79,14 +82,14 @@ public class CubeRepo {
         while (currentMemoryUsage + additionalFileLength > maxMemoryInBytes && currentMemoryUsage > 0) {
             Optional<Cube> oldestCube = getOldestAccessedCube(olderThanMillis);
             if (oldestCube.isPresent()) {
-                long memToFree = oldestCube.get().getFileSize();
                 oldestCube.get().dropCells();
                 currentMemoryUsage = getCurrentMemoryUsage();
-                log.info("Due to memory shortages, cube {} evicted from the memory. Free: {} KB",
+                log.info("Need {} MB free memory, so cube {} evicted. Free: {} MB",
+                        additionalFileLength / 1000000,
                         oldestCube.get().getName(),
-                        (maxMemoryInBytes + memToFree - currentMemoryUsage - additionalFileLength) / 1000000);
+                        (maxMemoryInBytes - currentMemoryUsage) / 1000000);
             } else {
-                log.error("Failed to drop cubes to meet the memory requirements. Free: {} KB", (maxMemoryInBytes - currentMemoryUsage - additionalFileLength) / 1000000);
+                log.error("Failed to drop cubes to meet the memory requirements. Free: {} MB", (maxMemoryInBytes - currentMemoryUsage - additionalFileLength) / 1000000);
                 break;
             }
         }
@@ -142,7 +145,7 @@ public class CubeRepo {
             result.setHash(fileHash);
             result.setFileSize(fileSize);
             result.setLastAccessTime(System.currentTimeMillis());
-            log.info("Cube data loaded from file: {}", file.getName());
+            log.info("Cube data loaded from file: {} ({} MB)", file.getName(), fileSize / 1000000);
 
         } catch (IOException | ClassNotFoundException ex) {
             log.error("Cube loading failed from file: {}", file.getName(), ex);

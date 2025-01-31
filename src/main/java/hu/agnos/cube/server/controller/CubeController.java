@@ -78,6 +78,9 @@ public class CubeController {
     ResponseEntity<?> getCubeList() {
         CubeList cubeNameAndList = cubeListService.getCubeList();
         Optional<CubeList> result = Optional.ofNullable(cubeNameAndList);
+        if(result.isPresent()) {
+            log.info("Sending cube list of {} cubes", cubeNameAndList.cubeMap().size());
+        }
         return result.map(response -> ResponseEntity.ok().body(response))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

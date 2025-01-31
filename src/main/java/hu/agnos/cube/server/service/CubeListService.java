@@ -31,7 +31,6 @@ public class CubeListService {
             Date agnosCreatedDate = cube.getCreatedDate();
             List<DimensionDTO> dimensionHeader = cube.getDimensions().stream().map(DimensionDTO::fromDimension).toList();
             List<MeasureDTO> measureHeader = cube.getMeasures().stream().map(MeasureDTO::fromMeasure).toList();
-
             CubeMetaDTO cubeMetaDTO = new CubeMetaDTO(agnosCreatedDate, cube.getHash(), dimensionHeader, measureHeader);
             cubeMap.put(cubeName, cubeMetaDTO);
         }
