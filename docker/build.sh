@@ -17,7 +17,9 @@ LATEST_JAR=$( ls -v ${GIT_ROOT_DIR}/target/AgnosCubeServer*.jar | tail -n 1 )
 echo ${LATEST_JAR}
 
 cp ${LATEST_JAR} ./AgnosCubeServer.jar
+cp -r "${GIT_ROOT_DIR}/demo" ./demo
 
 docker build -t ${TARGET_CONTAINER_NAME} .
 
 rm ./AgnosCubeServer.jar
+rm -r ./demo
