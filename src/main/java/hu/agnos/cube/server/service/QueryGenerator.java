@@ -8,6 +8,8 @@ import hu.agnos.cube.meta.queryDto.BaseVectorCoordinateForCube;
 import hu.agnos.cube.meta.queryDto.DrillVectorForCube;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -42,6 +44,8 @@ public final class QueryGenerator {
             } else {
                 if (drillVector.drillRequired()[i].isRequired() || QueryGenerator.isExtraDrillRequired(postCalculations, dimensions.get(i), baseNode)) {
                     childrenList.add(List.of(dimensions.get(i).getChildrenOf(baseNode)));
+                } else if (QueryGenerator.isKaplanMeierDimension(postCalculations, dimensions.get(i)) && baseNode.getLevel() > 0) {
+                    childrenList.add(QueryGenerator.getSiblingsUntilNode(dimensions.get(i), baseNode));
                 } else {
                     childrenList.add(List.of(baseNode));
                 }
@@ -59,10 +63,24 @@ public final class QueryGenerator {
      * @return True if required, false if not
      */
     private static boolean isExtraDrillRequired(List<PostCalculation> postCalculations, Dimension dimension, Node baseNode) {
-        if (baseNode.getChildrenId().length > 0) {
-            return postCalculations.stream().anyMatch(p -> p.dimension().getName().equals(dimension.getName()));
+        if (!baseNode.isLeaf()) {
+            return QueryGenerator.isKaplanMeierDimension(postCalculations, dimension);
         }
         return false;
+    }
+
+    private static boolean isKaplanMeierDimension(List<PostCalculation> postCalculations, Dimension dimension) {
+        return postCalculations.stream().anyMatch(p -> p.type().equalsIgnoreCase("KaplanMeier")
+                && p.dimension().getName().equals(dimension.getName()));
+    }
+
+    private static List<Node> getSiblingsUntilNode(Dimension dimension, Node baseNode) {
+        Node parent = dimension.getNode(baseNode.getLevel() - 1, baseNode.getParentId());
+        Node[] siblings = dimension.getChildrenOf(parent);
+        return Arrays.stream(siblings)
+                .sorted(Comparator.comparing(Node::getCode))
+                .takeWhile(sibling -> sibling.getCode().compareTo(baseNode.getCode()) <= 0)
+                .toList();
     }
 
 }

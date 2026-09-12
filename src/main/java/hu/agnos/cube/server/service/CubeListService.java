@@ -29,7 +29,9 @@ public class CubeListService {
         for (String cubeName : cubeRepo.keySet()) {
             Cube cube = cubeRepo.getCube(cubeName);
             Date agnosCreatedDate = cube.getCreatedDate();
-            List<DimensionDTO> dimensionHeader = cube.getDimensions().stream().map(DimensionDTO::fromDimension).toList();
+            List<DimensionDTO> dimensionHeader = cube.getDimensions().stream()
+                    .map(dimension -> DimensionDTO.fromDimension(dimension, cube.getPostCalculations()))
+                    .toList();
             List<MeasureDTO> measureHeader = cube.getMeasures().stream().map(MeasureDTO::fromMeasure).toList();
             CubeMetaDTO cubeMetaDTO = new CubeMetaDTO(agnosCreatedDate, cube.getHash(), dimensionHeader, measureHeader);
             cubeMap.put(cubeName, cubeMetaDTO);

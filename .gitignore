@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+demo/
+
+
+### Cube data files (too big for git)
+*.cube
+*.cube2
